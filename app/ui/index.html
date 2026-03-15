@@ -3,128 +3,149 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TOI RAG Chat</title>
+    <title>TOI E-Paper Assistant</title>
     <style>
       :root {
-        --bg: #f5efe2;
-        --bg-panel: rgba(255, 252, 245, 0.92);
-        --ink: #1f2a2e;
-        --muted: #5f6b6f;
-        --accent: #b7472a;
-        --accent-soft: #e8b98d;
-        --line: rgba(31, 42, 46, 0.14);
-        --user: #183a4a;
-        --assistant: #f8f1e5;
-        --shadow: 0 24px 60px rgba(83, 54, 21, 0.16);
+        --bg: #f7f7f7;
+        --bg-panel: #ffffff;
+        --ink: #1a1a1a;
+        --muted: #6b6b6b;
+        --accent: #E32E2B;
+        --line: #e0e0e0;
+        --user: #1a1a1a;
+        --assistant: #f5f5f5;
       }
 
-      * {
-        box-sizing: border-box;
-      }
+      * { box-sizing: border-box; }
 
       body {
         margin: 0;
         height: 100vh;
         overflow: hidden;
         color: var(--ink);
-        font-family: Georgia, "Times New Roman", serif;
-        background:
-          radial-gradient(circle at top left, rgba(183, 71, 42, 0.16), transparent 24rem),
-          radial-gradient(circle at bottom right, rgba(24, 58, 74, 0.12), transparent 24rem),
-          linear-gradient(135deg, #efe2c1 0%, #f8f5ee 45%, #efe8d8 100%);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background: var(--bg);
       }
 
       .shell {
         max-width: 1200px;
         margin: 0 auto;
-        padding: 24px;
+        padding: 16px;
         height: 100vh;
       }
 
       .frame {
         display: grid;
-        grid-template-columns: 280px minmax(0, 1fr);
-        gap: 18px;
-        height: calc(100vh - 48px);
+        grid-template-columns: 260px minmax(0, 1fr);
+        gap: 12px;
+        height: calc(100vh - 32px);
         overflow: hidden;
       }
 
       .panel {
         background: var(--bg-panel);
         border: 1px solid var(--line);
-        border-radius: 24px;
-        box-shadow: var(--shadow);
-        backdrop-filter: blur(16px);
+        border-radius: 12px;
       }
 
       .sidebar {
-        padding: 22px 20px;
+        padding: 20px 16px;
         display: flex;
         flex-direction: column;
-        gap: 18px;
-        overflow: hidden;
+        gap: 16px;
+        overflow-y: auto;
       }
 
-      .eyebrow {
-        letter-spacing: 0.14em;
-        font-size: 0.73rem;
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 4px;
+      }
+
+      .brand-mark {
+        width: 3px;
+        height: 28px;
+        background: var(--accent);
+        border-radius: 2px;
+      }
+
+      .brand-text {
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 0.12em;
         text-transform: uppercase;
-        color: var(--accent);
-        margin-bottom: 8px;
+        color: var(--muted);
       }
 
       .title {
         margin: 0;
-        font-size: 2.05rem;
-        line-height: 0.96;
+        font-size: 1.25rem;
+        font-weight: 600;
+        line-height: 1.3;
       }
 
       .subtitle {
-        margin: 0;
+        margin: 4px 0 0;
         color: var(--muted);
-        font-size: 0.98rem;
-        line-height: 1.5;
+        font-size: 0.82rem;
+        line-height: 1.45;
       }
 
       .label {
         display: block;
-        font-size: 0.84rem;
+        font-size: 0.75rem;
+        font-weight: 600;
         color: var(--muted);
-        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-bottom: 5px;
       }
 
       .control {
         width: 100%;
-        padding: 12px 13px;
-        border-radius: 14px;
+        padding: 9px 11px;
+        border-radius: 8px;
         border: 1px solid var(--line);
-        background: rgba(255, 255, 255, 0.84);
+        background: #fff;
         color: var(--ink);
         font: inherit;
+        font-size: 0.88rem;
+      }
+
+      .control:focus {
+        outline: none;
+        border-color: #999;
       }
 
       .chips {
         display: flex;
         flex-wrap: wrap;
-        gap: 10px;
+        gap: 6px;
       }
 
       .chip {
-        border: 1px solid rgba(183, 71, 42, 0.22);
-        background: rgba(255, 255, 255, 0.62);
+        border: 1px solid var(--line);
+        background: #fff;
         color: var(--ink);
-        border-radius: 999px;
-        padding: 10px 12px;
+        border-radius: 6px;
+        padding: 6px 10px;
+        font-size: 0.8rem;
         cursor: pointer;
         text-align: left;
-        font: inherit;
-        transition: transform 140ms ease, border-color 140ms ease, background 140ms ease;
+        font-family: inherit;
+        transition: background 120ms ease, border-color 120ms ease;
       }
 
       .chip:hover {
-        transform: translateY(-1px);
-        border-color: rgba(183, 71, 42, 0.45);
-        background: rgba(255, 248, 238, 0.95);
+        background: var(--bg);
+        border-color: #bbb;
+      }
+
+      .divider {
+        height: 1px;
+        background: var(--line);
+        margin: 2px 0;
       }
 
       .chat {
@@ -135,41 +156,44 @@
       }
 
       .chat-head {
-        padding: 24px 26px 18px;
+        padding: 16px 20px 12px;
         border-bottom: 1px solid var(--line);
       }
 
       .chat-head h2 {
-        margin: 0 0 8px;
-        font-size: 1.55rem;
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 600;
       }
 
       .chat-head p {
-        margin: 0;
+        margin: 4px 0 0;
         color: var(--muted);
+        font-size: 0.82rem;
       }
 
       .messages {
-        padding: 22px 26px;
+        padding: 16px 20px;
         overflow-y: auto;
         display: flex;
         flex-direction: column;
-        gap: 16px;
+        gap: 12px;
         min-height: 0;
       }
 
       .message {
-        max-width: 82%;
-        padding: 16px 18px;
-        border-radius: 20px;
+        max-width: 80%;
+        padding: 12px 14px;
+        border-radius: 12px;
         border: 1px solid var(--line);
-        animation: rise 180ms ease;
+        font-size: 0.9rem;
+        animation: rise 150ms ease;
       }
 
       .message.user {
         align-self: flex-end;
         background: var(--user);
-        color: #f7f6f0;
+        color: #fff;
         border-color: transparent;
       }
 
@@ -180,57 +204,62 @@
 
       .message.system {
         align-self: center;
-        background: rgba(255, 255, 255, 0.75);
+        background: #fff;
         color: var(--muted);
-        font-size: 0.92rem;
+        font-size: 0.84rem;
+        border-color: var(--line);
       }
 
       .message.loading {
         align-self: flex-start;
-        background: rgba(255, 248, 238, 0.88);
+        background: var(--assistant);
       }
 
       .meta {
-        font-size: 0.74rem;
-        letter-spacing: 0.08em;
+        font-size: 0.68rem;
+        font-weight: 600;
+        letter-spacing: 0.06em;
         text-transform: uppercase;
-        margin-bottom: 8px;
-        opacity: 0.76;
+        margin-bottom: 6px;
+        opacity: 0.6;
       }
 
       .body {
         white-space: pre-wrap;
-        line-height: 1.55;
+        line-height: 1.5;
       }
 
       .citations {
-        margin-top: 14px;
+        margin-top: 10px;
         display: grid;
-        gap: 10px;
+        gap: 6px;
       }
 
       .citation {
-        padding: 12px 13px;
-        border-radius: 14px;
-        background: rgba(255, 255, 255, 0.72);
+        padding: 8px 10px;
+        border-radius: 8px;
+        background: #fff;
         border: 1px solid var(--line);
         cursor: pointer;
-        transition: transform 140ms ease, border-color 140ms ease, background 140ms ease;
+        text-align: left;
+        font-family: inherit;
+        font-size: 0.82rem;
+        transition: background 120ms ease;
       }
 
       .citation:hover {
-        transform: translateY(-1px);
-        border-color: rgba(183, 71, 42, 0.45);
-        background: rgba(255, 251, 246, 0.95);
+        background: var(--bg);
       }
 
       .citation strong {
         display: block;
-        margin-bottom: 4px;
+        margin-bottom: 2px;
+        font-size: 0.82rem;
       }
 
       .citation small {
         color: var(--muted);
+        font-size: 0.75rem;
       }
 
       .modal-shell {
@@ -240,23 +269,21 @@
         align-items: center;
         justify-content: center;
         padding: 24px;
-        background: rgba(18, 25, 29, 0.55);
+        background: rgba(0, 0, 0, 0.45);
         z-index: 1000;
       }
 
-      .modal-shell.open {
-        display: flex;
-      }
+      .modal-shell.open { display: flex; }
 
       .modal {
-        width: min(760px, 100%);
-        max-height: min(82vh, 900px);
+        width: min(680px, 100%);
+        max-height: min(80vh, 900px);
         overflow: auto;
-        background: rgba(255, 252, 245, 0.98);
+        background: #fff;
         border: 1px solid var(--line);
-        border-radius: 24px;
-        box-shadow: var(--shadow);
-        padding: 22px 22px 18px;
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+        padding: 20px;
       }
 
       .modal-head {
@@ -264,96 +291,89 @@
         justify-content: space-between;
         align-items: flex-start;
         gap: 16px;
-        margin-bottom: 14px;
+        margin-bottom: 12px;
       }
 
       .modal-head h3 {
-        margin: 0 0 6px;
-        font-size: 1.25rem;
+        margin: 0 0 4px;
+        font-size: 1.05rem;
       }
 
       .modal-meta {
         color: var(--muted);
-        font-size: 0.9rem;
+        font-size: 0.82rem;
       }
 
       .modal-close {
         border: 1px solid var(--line);
-        background: rgba(255, 255, 255, 0.84);
+        background: #fff;
         color: var(--ink);
-        border-radius: 999px;
-        padding: 8px 12px;
+        border-radius: 6px;
+        padding: 6px 12px;
         cursor: pointer;
         font: inherit;
+        font-size: 0.82rem;
       }
+
+      .modal-close:hover { background: var(--bg); }
 
       .modal-body {
         white-space: pre-wrap;
-        line-height: 1.65;
+        line-height: 1.6;
         color: var(--ink);
+        font-size: 0.9rem;
       }
 
       .loading-dots {
         display: inline-flex;
-        gap: 6px;
+        gap: 4px;
         align-items: center;
       }
 
       .loading-dots span {
-        width: 8px;
-        height: 8px;
+        width: 6px;
+        height: 6px;
         border-radius: 50%;
-        background: var(--accent);
-        opacity: 0.25;
+        background: var(--ink);
+        opacity: 0.2;
         animation: pulse 1s infinite ease-in-out;
       }
 
-      .loading-dots span:nth-child(2) {
-        animation-delay: 0.16s;
-      }
-
-      .loading-dots span:nth-child(3) {
-        animation-delay: 0.32s;
-      }
+      .loading-dots span:nth-child(2) { animation-delay: 0.16s; }
+      .loading-dots span:nth-child(3) { animation-delay: 0.32s; }
 
       .composer {
-        padding: 18px 22px 22px;
+        padding: 12px 20px 16px;
         border-top: 1px solid var(--line);
-        background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,248,238,0.9) 55%);
       }
 
       .composer-box {
         display: grid;
         grid-template-columns: minmax(0, 1fr) auto;
-        gap: 12px;
+        gap: 8px;
       }
 
       textarea {
-        min-height: 74px;
+        min-height: 52px;
         resize: vertical;
       }
 
       .send {
         border: none;
-        border-radius: 18px;
-        padding: 0 18px;
-        min-width: 132px;
-        background: linear-gradient(180deg, #c85835 0%, #9d361e 100%);
-        color: #fff7f1;
+        border-radius: 8px;
+        padding: 0 20px;
+        min-width: 72px;
+        background: var(--ink);
+        color: #fff;
         font: inherit;
+        font-size: 0.88rem;
+        font-weight: 500;
         cursor: pointer;
-        transition: transform 140ms ease, box-shadow 140ms ease;
-        box-shadow: 0 10px 24px rgba(157, 54, 30, 0.28);
+        transition: opacity 120ms ease;
       }
 
-      .send:hover:not(:disabled) {
-        transform: translateY(-1px);
-      }
-
-      .send:disabled {
-        opacity: 0.65;
-        cursor: wait;
-      }
+      .send:hover:not(:disabled) { opacity: 0.85; }
+      .send:disabled { opacity: 0.4; cursor: wait; }
 
       .auth-shell {
         position: fixed;
@@ -362,96 +382,61 @@
         align-items: center;
         justify-content: center;
         padding: 24px;
-        background: rgba(18, 25, 29, 0.58);
+        background: rgba(0, 0, 0, 0.5);
         z-index: 1200;
       }
 
-      .auth-shell.open {
-        display: flex;
-      }
+      .auth-shell.open { display: flex; }
 
       .auth-card {
-        width: min(420px, 100%);
-        background: rgba(255, 252, 245, 0.98);
+        width: min(380px, 100%);
+        background: #fff;
         border: 1px solid var(--line);
-        border-radius: 24px;
-        box-shadow: var(--shadow);
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.12);
         padding: 24px;
       }
 
       .auth-actions {
         display: grid;
-        gap: 12px;
+        gap: 10px;
         margin-top: 16px;
       }
 
       .auth-note,
       .auth-error,
       .session-pill {
-        font-size: 0.9rem;
+        font-size: 0.82rem;
         color: var(--muted);
       }
 
-      .auth-error {
-        color: #9d361e;
-      }
+      .auth-error { color: var(--accent); }
 
       .session-pill {
-        padding: 10px 12px;
+        padding: 8px 10px;
         border: 1px solid var(--line);
-        border-radius: 14px;
-        background: rgba(255, 255, 255, 0.74);
+        border-radius: 8px;
+        background: var(--bg);
+        font-size: 0.8rem;
       }
 
       @keyframes rise {
-        from {
-          opacity: 0;
-          transform: translateY(8px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
+        from { opacity: 0; transform: translateY(4px); }
+        to { opacity: 1; transform: translateY(0); }
       }
 
       @keyframes pulse {
-        0%, 80%, 100% {
-          opacity: 0.25;
-          transform: scale(0.9);
-        }
-        40% {
-          opacity: 1;
-          transform: scale(1);
-        }
+        0%, 80%, 100% { opacity: 0.2; }
+        40% { opacity: 0.8; }
       }
 
       @media (max-width: 960px) {
-        body {
-          height: auto;
-          overflow: auto;
-        }
-
-        .shell {
-          height: auto;
-        }
-
-        .frame {
-          grid-template-columns: 1fr;
-          height: auto;
-          overflow: visible;
-        }
-
-        .message {
-          max-width: 100%;
-        }
-
-        .composer-box {
-          grid-template-columns: 1fr;
-        }
-
-        .send {
-          min-height: 52px;
-        }
+        body { height: auto; overflow: auto; }
+        .shell { height: auto; }
+        .frame { grid-template-columns: 1fr; height: auto; overflow: visible; }
+        .message { max-width: 100%; }
+        .composer-box { grid-template-columns: 1fr; }
+        .send { min-height: 44px; }
       }
     </style>
   </head>
@@ -460,52 +445,56 @@
       <div class="frame">
         <aside class="panel sidebar">
           <div>
-            <div class="eyebrow">TOI E-Paper RAG</div>
-            <h1 class="title">Ask the feed like a newsroom analyst.</h1>
-            <p class="subtitle">
-              Hybrid retrieval over structured edition metadata plus semantic article content.
-            </p>
+            <div class="brand">
+              <div class="brand-mark"></div>
+              <div class="brand-text">Times of India</div>
+            </div>
+            <h1 class="title">E-Paper Assistant</h1>
+            <p class="subtitle">Search across editions, sections, and article content.</p>
           </div>
 
           <div>
-            <label class="label" for="editionFilter">Edition Filter</label>
+            <label class="label" for="editionFilter">Edition</label>
             <select class="control" id="editionFilter">
               <option value="">All editions</option>
             </select>
           </div>
 
           <div>
-            <label class="label" for="sectionFilter">Section Filter</label>
+            <label class="label" for="sectionFilter">Section</label>
             <select class="control" id="sectionFilter">
               <option value="">All sections</option>
             </select>
           </div>
 
+          <div class="divider"></div>
+
           <div>
-            <div class="label">Prompt Starters</div>
+            <div class="label">Try asking</div>
             <div class="chips">
-              <button class="chip" data-prompt="Show me all articles published in the Delhi edition on March 11">Delhi edition on March 11</button>
+              <button class="chip" data-prompt="Show me all articles published in the Delhi edition on March 11">Delhi edition, March 11</button>
               <button class="chip" data-prompt="List all articles from the Sports section">Sports section</button>
               <button class="chip" data-prompt="Find articles related to the Iran war">Iran war</button>
-              <button class="chip" data-prompt="Find articles about the Iran conflict published in the Mumbai edition">Iran conflict in Mumbai</button>
-              <button class="chip" data-prompt="Show me opinion pieces from the Editorial section that discuss geopolitical tensions">Editorial geopolitical tensions</button>
+              <button class="chip" data-prompt="Find articles about the Iran conflict published in the Mumbai edition">Iran conflict, Mumbai</button>
+              <button class="chip" data-prompt="Show me opinion pieces from the Editorial section that discuss geopolitical tensions">Editorial geopolitics</button>
             </div>
           </div>
 
-          <div class="session-pill" id="sessionInfo">Checking session...</div>
-          <button class="chip" id="logoutButton" type="button">Log out</button>
+          <div style="margin-top: auto;">
+            <div class="session-pill" id="sessionInfo">Checking session...</div>
+            <button class="chip" id="logoutButton" type="button" style="margin-top: 8px; width: 100%; text-align: center;">Log out</button>
+          </div>
         </aside>
 
         <main class="panel chat">
           <div class="chat-head">
-            <div class="eyebrow">Chat Assistant</div>
-            <h2>Question answering with citations</h2>
-            <p>Ask about editions, sections, political stories, sports coverage, or topic-specific events.</p>
+            <h2>Ask the archive</h2>
+            <p>Editions, sections, topics, or specific events from the e-paper feed.</p>
           </div>
 
           <div class="messages" id="messages">
             <div class="message system">
-              <div class="body">Ask a question to test SQL, semantic, or hybrid retrieval. The assistant will answer and attach supporting articles.</div>
+              <div class="body">Ask a question about the TOI e-paper. The assistant will search across articles and provide answers with supporting citations.</div>
             </div>
           </div>
 
@@ -538,9 +527,8 @@
 
     <div class="auth-shell" id="authGate">
       <div class="auth-card">
-        <div class="eyebrow">Secure Access</div>
-        <h2 class="title" style="font-size: 1.8rem;">Sign in to the archive</h2>
-        <p class="subtitle">Use your email and password. If the email does not exist yet, the app will create the account and start a 7-day session.</p>
+        <h2 class="title" style="margin-bottom: 4px;">Sign in</h2>
+        <p class="subtitle">Enter your email and password. New emails will create an account automatically.</p>
         <div style="margin-top: 16px;">
           <label class="label" for="authEmail">Email</label>
           <input class="control" id="authEmail" type="email" autocomplete="email" />
