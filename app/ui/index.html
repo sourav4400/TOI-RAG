@@ -527,8 +527,12 @@
 
     <div class="auth-shell" id="authGate">
       <div class="auth-card">
-        <h2 class="title" style="margin-bottom: 4px;">Sign in</h2>
-        <p class="subtitle">Enter your email and password. New emails will create an account automatically.</p>
+        <div class="brand" style="margin-bottom: 12px;">
+          <div class="brand-mark"></div>
+          <div class="brand-text">Times of India</div>
+        </div>
+        <h2 class="title" style="margin-bottom: 4px;">Sign in to the E-Paper Assistant</h2>
+        <p class="subtitle">This is a demo with restricted access. If you don't have an account, reach out to Mukul or Sourav to request one — typically set up within a day.</p>
         <div style="margin-top: 16px;">
           <label class="label" for="authEmail">Email</label>
           <input class="control" id="authEmail" type="email" autocomplete="email" />
@@ -538,8 +542,7 @@
           <input class="control" id="authPassword" type="password" autocomplete="current-password" />
         </div>
         <div class="auth-actions">
-          <button class="send" id="loginButton" type="button">Continue</button>
-          <div class="auth-note">Session duration: 7 days</div>
+          <button class="send" id="loginButton" type="button" style="padding: 10px 20px;">Sign in</button>
           <div class="auth-error" id="authError"></div>
         </div>
       </div>
